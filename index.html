@@ -1,303 +1,162 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Recognition Wall</title>
+<meta charset="UTF-8">
+<title>Recognition Wall</title>
 
-  <style>
-    :root{
-      --bg:#f5f7fb; --card:#fff; --text:#0f172a; --muted:#64748b;
-      --primary:#22c55e; --primary2:#16a34a; --border:#e2e8f0;
-      --shadow:0 10px 25px rgba(15,23,42,.08);
-      --shadow2:0 6px 14px rgba(15,23,42,.08);
-      --radius:16px;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
-    header{position:sticky;top:0;background:#243447;color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;z-index:10}
-    header .title{font-weight:800;display:flex;gap:10px;align-items:center}
-    header .pill{font-size:12px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);padding:6px 10px;border-radius:999px}
-    .wrap{max-width:1100px;margin:18px auto;padding:0 16px 28px;display:grid;grid-template-columns:2fr 1fr;gap:16px}
-    .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow2);overflow:hidden}
-    .panel h2{margin:0;padding:14px 16px;border-bottom:1px solid var(--border);font-size:14px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.3px}
-    .composer{padding:16px;display:grid;gap:10px}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .field{display:flex;flex-direction:column;gap:6px}
-    label{font-size:12px;color:var(--muted);font-weight:700}
-    input,textarea{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px 12px;outline:none;background:#fff;font-size:14px}
-    textarea{min-height:92px;resize:vertical}
-    input:focus,textarea:focus{border-color:#94a3b8;box-shadow:0 0 0 3px rgba(148,163,184,.25)}
-    .actions{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:4px}
-    .btn{border:0;background:var(--primary);color:#fff;padding:10px 14px;border-radius:12px;font-weight:900;cursor:pointer;box-shadow:var(--shadow2)}
-    .btn:hover{background:var(--primary2)}
-    .btn:disabled{opacity:.6;cursor:not-allowed}
-    .hint{font-size:12px;color:var(--muted)}
-    .toast{position:fixed;bottom:18px;right:18px;background:#0b1220;color:#fff;padding:12px 14px;border-radius:14px;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);transition:.18s ease;max-width:320px;font-size:13px;z-index:50}
-    .toast.show{opacity:1;transform:translateY(0)}
-    .feed{padding:14px;display:grid;gap:12px}
-    .card{border:1px solid var(--border);border-radius:16px;padding:12px;background:#fff;box-shadow:var(--shadow2);display:grid;grid-template-columns:48px 1fr;gap:12px}
-    .avatar{width:48px;height:48px;border-radius:14px;border:1px solid var(--border);overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center}
-    .avatar img{width:100%;height:100%;object-fit:cover}
-    .meta{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-    .name{font-weight:900;font-size:14px;line-height:1.2}
-    .sub{font-size:12px;color:var(--muted);margin-top:2px}
-    .badge{font-size:12px;font-weight:900;padding:6px 10px;border-radius:999px;background:rgba(34,197,94,.12);color:#166534;border:1px solid rgba(34,197,94,.25);white-space:nowrap}
-    .reason{margin-top:8px;font-size:14px;line-height:1.35}
-    .side{padding:12px 14px;display:grid;gap:12px}
-    .kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .kpi .box{border:1px solid var(--border);border-radius:14px;padding:12px;background:#fff}
-    .kpi .t{font-size:12px;color:var(--muted);font-weight:800}
-    .kpi .v{font-size:20px;font-weight:950;margin-top:6px}
-    .lb{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:#fff}
-    .lb .rowItem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-top:1px solid var(--border)}
-    .lb .rowItem:first-child{border-top:0}
-    .lb .left{display:flex;align-items:center;gap:10px;min-width:0}
-    .miniAvatar{width:34px;height:34px;border-radius:12px;border:1px solid var(--border);overflow:hidden;flex:0 0 auto}
-    .miniAvatar img{width:100%;height:100%;object-fit:cover}
-    .lbName{font-weight:900;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px}
-    .pts{font-weight:950;font-size:13px}
-    @media (max-width:900px){.wrap{grid-template-columns:1fr}}
-  </style>
+<style>
+body { font-family: Arial; background:#f4f6f9; margin:0 }
+header { background:#243447; color:white; padding:15px; text-align:center }
+
+.container {
+  display:grid;
+  grid-template-columns: 2fr 1fr;
+  gap:20px;
+  padding:20px;
+}
+
+.card {
+  background:white;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:10px;
+  display:flex;
+  gap:10px;
+}
+
+.avatar img {
+  width:50px;
+  height:50px;
+}
+
+.form {
+  background:white;
+  padding:15px;
+  margin-bottom:20px;
+  border-radius:12px;
+}
+
+button {
+  background:green;
+  color:white;
+  padding:10px;
+  border:none;
+}
+
+</style>
 </head>
 
 <body>
-<header>
-  <div class="title">Recognition Wall 🚀 <span class="pill">últimos 4 días</span></div>
-  <div class="pill" id="statusPill">Conectando...</div>
-</header>
 
-<div class="wrap">
-  <section class="panel">
-    <h2>Pizarrón principal</h2>
+<header>Recognition Wall 🚀</header>
 
-    <div class="composer">
-      <div class="row">
-        <div class="field">
-          <label>¿A quién reconoces? (email)</label>
-          <input id="recognizedUser" list="teamList" placeholder="ej. nombre.apellido@se.com" />
-          <datalist id="teamList"></datalist>
-        </div>
-        <div class="field">
-          <label>Tu email (quién reconoce)</label>
-          <input id="recognizedBy" placeholder="ej. tu.email@se.com" />
-        </div>
-      </div>
+<div class="container">
 
-      <div class="field">
-        <label>Felicitación / comentario</label>
-        <textarea id="reason" placeholder="Ej: Gracias por apoyar hoy en ___, se notó tu colaboración..."></textarea>
-        <div class="hint" id="charHint">0 / 220</div>
-      </div>
+<div>
 
-      <div class="actions">
-        <button class="btn" id="btnSend" onclick="addRecognition()">Reconocer +10</button>
-        <div class="hint">Reglas: el feed muestra 4 días · misma persona solo cada 7 días.</div>
-      </div>
-    </div>
-
-    <div class="feed" id="feed"></div>
-  </section>
-
-  <aside class="panel">
-    <h2>Marcador</h2>
-    <div class="side">
-      <div class="kpi">
-        <div class="box">
-          <div class="t">Reconocimientos (4 días)</div>
-          <div class="v" id="kpiCount">–</div>
-        </div>
-        <div class="box">
-          <div class="t">Top 1 (puntos)</div>
-          <div class="v" id="kpiTop">–</div>
-        </div>
-      </div>
-
-      <div class="lb" id="leaderboard"></div>
-      <div class="hint">Ranking por puntos acumulados.</div>
-    </div>
-  </aside>
+<div class="form">
+<select id="user"></select>
+<input id="by" placeholder="Tu nombre">
+<input id="reason" placeholder="Motivo">
+<button onclick="add()">Reconocer</button>
 </div>
 
-<div class="toast" id="toast"></div>
+<div id="feed"></div>
+</div>
+
+<div>
+<h3>🏆 Leaderboard</h3>
+<div id="leaderboard"></div>
+</div>
+
+</div>
 
 <script>
-  const API_BASE = "https://recognition-backend-lz5r.onrender.com";
-  const API_RECOG = `${API_BASE}/recognitions`;
-  const API_LEAD  = `${API_BASE}/recognitions/leaderboard`;
 
-  const API_KEY = "recognition123secure"; // 👈 pon tu API key real
+const API = "https://recognition-backend-lz5r.onrender.com/recognitions";
+const API_KEY = "recognition123secure";
 
-  // 👥 Pega aquí tu lista (email + nombre). Ejemplo:
-  const TEAM = [
-    { email: "eduardo.lazcano@se.com", name: "Eduardo Lazcano" },
-    // ... tus ~50
-  ];
+// ✅ LISTA DE USUARIOS
+const USERS = [
+"Edgar Díaz","Fernanda Sedano","Hugo Rincón","Fernanda Silva","Silvia Medellín",
+"Carlos Uh","Edgar Pérez","Eduardo Carrillo","Eduardo Ríos","Gustavo Baez",
+"Gustavo Polo","Julián Aguilar","Noé Tovar","David Soto","Edison Juárez",
+"Eduardo Lazcano","Fernanda Alatorre","Indira Cortés","Juan López",
+"Juan Rodríguez","Karla Villa","Luis Nualart","Majo Jiménez",
+"Valeria Legorreta","Zared Torres","Adriana Castro","Diego Hernández",
+"Enrique Ramírez","Pedro Escamilla","Karla Domínguez","Francisco Pedraza",
+"Georgina Bernardo","Jonathan Tapia","Roberto Grijalva","Tomás Gutiérrez",
+"Marco Quintas","Salvador Saucedo","Xaver Medina","Braulio Cossio",
+"Emmanuel Gutiérrez","Ignacio Padrón","Luis González","Luis Monreal",
+"Luis García","Merith Martínez","Sergio Olvera","Sonny Castro"
+];
 
-  function toast(msg){
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.classList.add("show");
-    setTimeout(()=>t.classList.remove("show"), 2600);
-  }
+// llenar dropdown
+const select = document.getElementById("user");
+USERS.forEach(u=>{
+  const opt = document.createElement("option");
+  opt.value = u;
+  opt.text = u;
+  select.appendChild(opt);
+});
 
-  function displayName(email){
-    const found = TEAM.find(x => x.email.toLowerCase() === String(email||"").toLowerCase());
-    if (found) return found.name;
-    const base = String(email||"").split("@")[0] || "Usuario";
-    return base.replace(/\./g," ").replace(/\b\w/g, c => c.toUpperCase());
-  }
+// avatar
+function avatar(name){
+  return `https://api.dicebear.com/9.x/bottts/svg?seed=${name}`;
+}
 
-  // 🤖 Avatar por URL con seed (email) usando DiceBear HTTP API [1](https://www.dicebear.com/how-to-use/http-api/)
-  function avatarUrl(seed){
-    const s = encodeURIComponent(seed || "user");
-    return `https://api.dicebear.com/9.x/bottts/svg?seed=${s}`;
-  }
+async function load(){
+  const res = await fetch(API, {headers:{"x-api-key":API_KEY}});
+  const data = await res.json();
 
-  function timeAgo(iso){
-    const d = new Date(iso);
-    const diff = Date.now() - d.getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return "justo ahora";
-    if (mins < 60) return `hace ${mins} min`;
-    const hrs = Math.floor(mins/60);
-    if (hrs < 24) return `hace ${hrs} h`;
-    const days = Math.floor(hrs/24);
-    return `hace ${days} día(s)`;
-  }
+  const feed = document.getElementById("feed");
+  feed.innerHTML="";
 
-  function fillDatalist(){
-    const dl = document.getElementById("teamList");
-    dl.innerHTML = TEAM.map(p => `<option value="${p.email}">${p.name}</option>`).join("");
-  }
-
-  async function apiGet(url){
-    const res = await fetch(url, { headers: { "x-api-key": API_KEY }});
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Error");
-    return data;
-  }
-
-  async function apiPost(url, body){
-    const res = await fetch(url, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json", "x-api-key": API_KEY },
-      body: JSON.stringify(body)
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Error");
-    return data;
-  }
-
-  async function loadAll(){
-    try{
-      document.getElementById("statusPill").textContent = "Conectado ✅";
-      const feed = await apiGet(API_RECOG);
-      renderFeed(feed);
-
-      const lb = await apiGet(API_LEAD);
-      renderLeaderboard(lb);
-
-      document.getElementById("kpiCount").textContent = feed.length;
-      document.getElementById("kpiTop").textContent = lb[0] ? lb[0].points : "0";
-    }catch(e){
-      document.getElementById("statusPill").textContent = "Error ❌";
-      toast(e.message || "Error");
-    }
-  }
-
-  function renderFeed(items){
-    const container = document.getElementById("feed");
-    container.innerHTML = "";
-
-    const sorted = [...items].sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
-
-    sorted.forEach(item=>{
-      const name = displayName(item.recognizedUser);
-      const av = avatarUrl(item.recognizedUser);
-      const when = `${timeAgo(item.createdAt)} · ${new Date(item.createdAt).toLocaleString()}`;
-
-      const div = document.createElement("div");
-      div.className = "card";
-      div.innerHTML = `
-        <div class="avatar"><img src="${av}" alt="avatar"/></div>
+  data.reverse().forEach(r=>{
+    feed.innerHTML += `
+      <div class="card">
+        <div class="avatar">
+          <img src="${avatar(r.recognizedUser)}"/>
+        </div>
         <div>
-          <div class="meta">
-            <div>
-              <div class="name">${name}</div>
-              <div class="sub">${when}</div>
-            </div>
-            <div class="badge">+${item.points || 10} pts</div>
-          </div>
-          <div class="reason">${item.reason}</div>
+          <b>${r.recognizedUser}</b>
+          <p>${r.reason}</p>
         </div>
-      `;
-      container.appendChild(div);
-    });
-  }
-
-  function renderLeaderboard(rows){
-    const box = document.getElementById("leaderboard");
-    box.innerHTML = "";
-
-    const top10 = rows.slice(0,10);
-
-    top10.forEach((r, idx)=>{
-      const nm = displayName(r.user);
-      const av = avatarUrl(r.user);
-      const row = document.createElement("div");
-      row.className = "rowItem";
-      row.innerHTML = `
-        <div class="left">
-          <div class="miniAvatar"><img src="${av}" alt="avatar"/></div>
-          <div class="lbName">#${idx+1} ${nm}</div>
-        </div>
-        <div class="pts">${r.points} pts</div>
-      `;
-      box.appendChild(row);
-    });
-
-    if (top10.length === 0){
-      box.innerHTML = `<div class="rowItem"><span class="hint">Aún no hay puntos</span></div>`;
-    }
-  }
-
-  async function addRecognition(){
-    const btn = document.getElementById("btnSend");
-    btn.disabled = true;
-
-    try{
-      const recognizedUser = document.getElementById("recognizedUser").value.trim();
-      const recognizedBy = document.getElementById("recognizedBy").value.trim();
-      const reason = document.getElementById("reason").value.trim();
-
-      if(!recognizedUser || !recognizedBy || !reason){
-        toast("Completa los campos antes de enviar 🙂");
-        return;
-      }
-
-      await apiPost(API_RECOG, { recognizedUser, recognizedBy, reason });
-      toast("✅ Reconocimiento enviado");
-
-      document.getElementById("reason").value = "";
-      document.getElementById("charHint").textContent = "0 / 220";
-
-      await loadAll();
-    }catch(e){
-      toast(e.message || "Error");
-    }finally{
-      btn.disabled = false;
-    }
-  }
-
-  const reasonEl = document.getElementById("reason");
-  reasonEl.addEventListener("input", ()=>{
-    document.getElementById("charHint").textContent = `${reasonEl.value.length} / 220`;
+      </div>
+    `;
   });
 
-  fillDatalist();
-  loadAll();
-  setInterval(loadAll, 30000);
+  const lbRes = await fetch(API+"/leaderboard",{headers:{"x-api-key":API_KEY}});
+  const lb = await lbRes.json();
+
+  document.getElementById("leaderboard").innerHTML =
+    lb.slice(0,5).map(x=>`<div>${x.name} - ${x.points}</div>`).join("");
+}
+
+async function add(){
+  const user = document.getElementById("user").value;
+  const by = document.getElementById("by").value;
+  const reason = document.getElementById("reason").value;
+
+  await fetch(API,{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "x-api-key":API_KEY
+    },
+    body:JSON.stringify({
+      recognizedUser:user,
+      recognizedBy:by,
+      reason:reason
+    })
+  });
+
+  load();
+}
+
+load();
+
 </script>
+
 </body>
 </html>
