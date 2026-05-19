@@ -1,162 +1,612 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Recognition Wall</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Recognition Wall</title>
 
-<style>
-body { font-family: Arial; background:#f4f6f9; margin:0 }
-header { background:#243447; color:white; padding:15px; text-align:center }
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --border:#e2e8f0;
+      --shadow:0 10px 30px rgba(15,23,42,.08);
+      --shadow2:0 6px 16px rgba(15,23,42,.08);
+      --radius:18px;
 
-.container {
-  display:grid;
-  grid-template-columns: 2fr 1fr;
-  gap:20px;
-  padding:20px;
-}
+      --se-navy:#243447;
+      --se-green:#22c55e;
+      --se-green2:#16a34a;
+      --se-lime:#a3e635;
+    }
 
-.card {
-  background:white;
-  padding:15px;
-  border-radius:12px;
-  margin-bottom:10px;
-  display:flex;
-  gap:10px;
-}
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:
+        radial-gradient(1200px 500px at 10% -10%, rgba(34,197,94,.18), transparent 60%),
+        radial-gradient(1000px 420px at 110% 0%, rgba(163,230,53,.16), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
 
-.avatar img {
-  width:50px;
-  height:50px;
-}
+    header{
+      position:sticky; top:0; z-index:10;
+      background: linear-gradient(90deg, #1f2a38, #243447 40%, #1f2a38);
+      color:#fff;
+      padding:14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .title{
+      display:flex; align-items:center; gap:10px;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    .title .chip{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      font-weight:800;
+      display:flex; align-items:center; gap:6px;
+    }
+    .status{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      white-space:nowrap;
+    }
 
-.form {
-  background:white;
-  padding:15px;
-  margin-bottom:20px;
-  border-radius:12px;
-}
+    .wrap{
+      max-width:1200px;
+      margin:18px auto;
+      padding:0 16px 28px;
+      display:grid;
+      grid-template-columns: 2.2fr 1fr;
+      gap:16px;
+    }
 
-button {
-  background:green;
-  color:white;
-  padding:10px;
-  border:none;
-}
+    .panel{
+      background:rgba(255,255,255,.8);
+      backdrop-filter: blur(8px);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow2);
+      overflow:hidden;
+    }
+    .panel h2{
+      margin:0;
+      padding:14px 16px;
+      border-bottom:1px solid var(--border);
+      font-size:13px;
+      color:var(--muted);
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.3px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+    }
+    .panel h2 small{
+      font-size:12px;
+      font-weight:800;
+      color:var(--muted);
+      text-transform:none;
+      letter-spacing:0;
+    }
 
-</style>
+    /* Composer */
+    .composer{
+      padding:16px;
+      display:grid;
+      gap:10px;
+    }
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1.2fr auto;
+      gap:10px;
+      align-items:end;
+    }
+    .field{display:flex; flex-direction:column; gap:6px;}
+    label{font-size:12px; color:var(--muted); font-weight:800;}
+    input, textarea{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px 12px;
+      outline:none;
+      background:#fff;
+      font-size:14px;
+    }
+    input:focus, textarea:focus{
+      border-color:#94a3b8;
+      box-shadow:0 0 0 3px rgba(148,163,184,.25);
+    }
+    textarea{
+      min-height:58px;
+      resize:vertical;
+    }
+
+    .btn{
+      border:0;
+      border-radius:14px;
+      padding:11px 14px;
+      background: linear-gradient(180deg, var(--se-green), var(--se-green2));
+      color:#fff;
+      font-weight:950;
+      cursor:pointer;
+      box-shadow: var(--shadow2);
+      display:flex; align-items:center; gap:8px;
+      height:42px;
+    }
+    .btn:hover{ filter:brightness(1.03); transform: translateY(-1px); }
+    .btn:disabled{ opacity:.65; cursor:not-allowed; transform:none; }
+
+    .hint{
+      font-size:12px; color:var(--muted);
+      display:flex; gap:10px; flex-wrap:wrap;
+      align-items:center;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#fff;
+      font-weight:800;
+    }
+
+    /* Feed grid (4 columns) */
+    .feed{
+      padding:14px;
+      display:grid;
+      gap:12px;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+    }
+
+    .card{
+      background: #ffffff;
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow: var(--shadow2);
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height: 150px;
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+    .card:hover{
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .who{
+      display:flex; align-items:center; gap:10px;
+      min-width:0;
+    }
+    .avatar{
+      width:44px; height:44px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      overflow:hidden;
+      flex:0 0 auto;
+      position:relative;
+      background:#fff;
+    }
+    .avatar img{
+      width:100%; height:100%;
+      object-fit:cover;
+    }
+    /* pequeño toque "sustentable" */
+    .avatar::after{
+      content:"🌿";
+      position:absolute;
+      right:-6px; bottom:-8px;
+      font-size:18px;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
+    }
+
+    .name{
+      font-weight:950;
+      font-size:14px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      max-width: 180px;
+    }
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .badge{
+      font-size:12px;
+      font-weight:950;
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(34,197,94,.12);
+      border:1px solid rgba(34,197,94,.25);
+      color:#166534;
+      white-space:nowrap;
+    }
+
+    .reason{
+      font-size:14px;
+      line-height:1.35;
+      color:var(--text);
+      display:-webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow:hidden;
+    }
+
+    /* Sidebar */
+    .side{
+      padding:12px 14px;
+      display:grid;
+      gap:12px;
+    }
+    .kpis{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .kpi{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:12px;
+      box-shadow: var(--shadow2);
+    }
+    .kpi .t{font-size:12px; color:var(--muted); font-weight:900;}
+    .kpi .v{font-size:20px; font-weight:950; margin-top:6px;}
+
+    .lb{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:16px;
+      overflow:hidden;
+      box-shadow: var(--shadow2);
+    }
+    .lbRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 12px;
+      border-top:1px solid var(--border);
+    }
+    .lbRow:first-child{border-top:0}
+    .lbLeft{display:flex; align-items:center; gap:10px; min-width:0;}
+    .miniAvatar{
+      width:32px; height:32px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      overflow:hidden;
+      flex:0 0 auto;
+      background:#fff;
+    }
+    .miniAvatar img{width:100%; height:100%; object-fit:cover;}
+    .lbName{
+      font-weight:950;
+      font-size:13px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      max-width: 170px;
+    }
+    .pts{font-weight:950; font-size:13px;}
+
+    .toast{
+      position:fixed;
+      bottom:18px; right:18px;
+      background:#0b1220;
+      color:#fff;
+      padding:12px 14px;
+      border-radius:16px;
+      box-shadow: var(--shadow);
+      opacity:0;
+      transform:translateY(8px);
+      transition:.16s ease;
+      max-width:360px;
+      font-size:13px;
+      z-index:50;
+    }
+    .toast.show{opacity:1; transform:translateY(0);}
+
+    /* Responsive */
+    @media (max-width: 1150px){
+      .feed{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .row{ grid-template-columns: 1fr 1fr 1.2fr; }
+      .btn{ grid-column: 1 / -1; width:100%; justify-content:center; }
+    }
+    @media (max-width: 900px){
+      .wrap{ grid-template-columns: 1fr; }
+      .feed{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 520px){
+      .feed{ grid-template-columns: 1fr; }
+      .row{ grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 
 <body>
+<header>
+  <div class="title">
+    Recognition Wall 🚀
+    <span class="chip">🌿 Sustentable</span>
+    <span class="chip">4 días</span>
+  </div>
+  <div class="status" id="statusPill">Conectando…</div>
+</header>
 
-<header>Recognition Wall 🚀</header>
+<div class="wrap">
 
-<div class="container">
+  <!-- MAIN -->
+  <section class="panel">
+    <h2>
+      Pizarrón principal
+      <small>sin jerarquías · 4 columnas</small>
+    </h2>
 
-<div>
+    <div class="composer">
+      <div class="row">
 
-<div class="form">
-<select id="user"></select>
-<input id="by" placeholder="Tu nombre">
-<input id="reason" placeholder="Motivo">
-<button onclick="add()">Reconocer</button>
-</div>
-
-<div id="feed"></div>
-</div>
-
-<div>
-<h3>🏆 Leaderboard</h3>
-<div id="leaderboard"></div>
-</div>
-
-</div>
-
-<script>
-
-const API = "https://recognition-backend-lz5r.onrender.com/recognitions";
-const API_KEY = "recognition123secure";
-
-// ✅ LISTA DE USUARIOS
-const USERS = [
-"Edgar Díaz","Fernanda Sedano","Hugo Rincón","Fernanda Silva","Silvia Medellín",
-"Carlos Uh","Edgar Pérez","Eduardo Carrillo","Eduardo Ríos","Gustavo Baez",
-"Gustavo Polo","Julián Aguilar","Noé Tovar","David Soto","Edison Juárez",
-"Eduardo Lazcano","Fernanda Alatorre","Indira Cortés","Juan López",
-"Juan Rodríguez","Karla Villa","Luis Nualart","Majo Jiménez",
-"Valeria Legorreta","Zared Torres","Adriana Castro","Diego Hernández",
-"Enrique Ramírez","Pedro Escamilla","Karla Domínguez","Francisco Pedraza",
-"Georgina Bernardo","Jonathan Tapia","Roberto Grijalva","Tomás Gutiérrez",
-"Marco Quintas","Salvador Saucedo","Xaver Medina","Braulio Cossio",
-"Emmanuel Gutiérrez","Ignacio Padrón","Luis González","Luis Monreal",
-"Luis García","Merith Martínez","Sergio Olvera","Sonny Castro"
-];
-
-// llenar dropdown
-const select = document.getElementById("user");
-USERS.forEach(u=>{
-  const opt = document.createElement("option");
-  opt.value = u;
-  opt.text = u;
-  select.appendChild(opt);
-});
-
-// avatar
-function avatar(name){
-  return `https://api.dicebear.com/9.x/bottts/svg?seed=${name}`;
-}
-
-async function load(){
-  const res = await fetch(API, {headers:{"x-api-key":API_KEY}});
-  const data = await res.json();
-
-  const feed = document.getElementById("feed");
-  feed.innerHTML="";
-
-  data.reverse().forEach(r=>{
-    feed.innerHTML += `
-      <div class="card">
-        <div class="avatar">
-          <img src="${avatar(r.recognizedUser)}"/>
+        <div class="field">
+          <label>¿A quién reconoces?</label>
+          <input id="recognizedUser" list="usersList" placeholder="Escribe para autocompletar…" />
+          <datalist id="usersList"></datalist>
         </div>
-        <div>
-          <b>${r.recognizedUser}</b>
-          <p>${r.reason}</p>
+
+        <div class="field">
+          <label>¿Quién reconoce?</label>
+          <input id="recognizedBy" list="usersList" placeholder="Escribe tu nombre…" />
+        </div>
+
+        <div class="field">
+          <label>Comentario / felicitación</label>
+          <input id="reason" placeholder="Ej. Gracias por apoyar hoy en… 🙌" />
+        </div>
+
+        <button class="btn" id="btnSend" onclick="addRecognition()">✨ Reconocer</button>
+      </div>
+
+      <div class="hint">
+        <span class="pill">📌 Los comentarios duran 4 días</span>
+        <span class="pill">⏳ Misma persona: 7 días</span>
+        <span class="pill">🎲 El mural se muestra en orden aleatorio</span>
+      </div>
+    </div>
+
+    <div class="feed" id="feed"></div>
+  </section>
+
+  <!-- SIDE -->
+  <aside class="panel">
+    <h2>🏆 Marcador</h2>
+    <div class="side">
+
+      <div class="kpis">
+        <div class="kpi">
+          <div class="t">Reconocimientos visibles</div>
+          <div class="v" id="kpiCount">–</div>
+        </div>
+        <div class="kpi">
+          <div class="t">Top puntos</div>
+          <div class="v" id="kpiTop">–</div>
         </div>
       </div>
-    `;
-  });
 
-  const lbRes = await fetch(API+"/leaderboard",{headers:{"x-api-key":API_KEY}});
-  const lb = await lbRes.json();
+      <div class="lb" id="leaderboard"></div>
 
-  document.getElementById("leaderboard").innerHTML =
-    lb.slice(0,5).map(x=>`<div>${x.name} - ${x.points}</div>`).join("");
-}
+      <div class="hint">El ranking se ordena por puntos (no por nombre).</div>
+    </div>
+  </aside>
 
-async function add(){
-  const user = document.getElementById("user").value;
-  const by = document.getElementById("by").value;
-  const reason = document.getElementById("reason").value;
+</div>
 
-  await fetch(API,{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      "x-api-key":API_KEY
-    },
-    body:JSON.stringify({
-      recognizedUser:user,
-      recognizedBy:by,
-      reason:reason
-    })
-  });
+<div class="toast" id="toast"></div>
 
-  load();
-}
+<script>
+  // ====== CONFIG ======
+  const API = "https://recognition-backend-lz5r.onrender.com/recognitions";
+  const API_KEY = "recognition123secure"; // <-- pon tu API key real
 
-load();
+  // Lista ORIGINAL (no la ordeno aquí)
+  const USERS = [
+    "Edgar Díaz","Fernanda Sedano","Hugo Rincón","Fernanda Silva","Silvia Medellín",
+    "Carlos Uh","Edgar Pérez","Eduardo Carrillo","Eduardo Ríos","Gustavo Baez",
+    "Gustavo Polo","Julián Aguilar","Noé Tovar","David Soto","Edison Juárez",
+    "Eduardo Lazcano","Fernanda Alatorre","Indira Cortés","Juan López",
+    "Juan Rodríguez","Karla Villa","Luis Nualart","Majo Jiménez",
+    "Valeria Legorreta","Zared Torres","Adriana Castro","Diego Hernández",
+    "Enrique Ramírez","Pedro Escamilla","Karla Domínguez","Francisco Pedraza",
+    "Georgina Bernardo","Jonathan Tapia","Roberto Grijalva","Tomás Gutiérrez",
+    "Marco Quintas","Salvador Saucedo","Xaver Medina","Braulio Cossio",
+    "Emmanuel Gutiérrez","Ignacio Padrón","Luis González","Luis Monreal",
+    "Luis García","Merith Martínez","Sergio Olvera","Sonny Castro"
+  ];
 
+  // Autocomplete: lo muestro alfabetizado en el datalist (solo para sugerencias)
+  const USERS_SORTED = [...USERS].sort((a,b)=>a.localeCompare(b,'es'));
+
+  // Avatar sustentable (iniciales + verde)
+  // UI Avatars permite name, rounded, background, color, size, bold, etc. [4](https://ui-avatars.com/)
+  function avatarUrl(name){
+    const n = encodeURIComponent(name || "SE");
+    return `https://ui-avatars.com/api/?name=${n}&rounded=true&background=0D8A3B&color=fff&size=128&bold=true`;
+  }
+
+  function toast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 2600);
+  }
+
+  // shuffle para que no exista sensación de "ranking" en el feed
+  function shuffle(arr){
+    const a = [...arr];
+    for (let i=a.length-1; i>0; i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+  async function apiGet(url){
+    const res = await fetch(url, { headers: { "x-api-key": API_KEY }});
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Error");
+    return data;
+  }
+
+  async function apiPost(url, body){
+    const res = await fetch(url, {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "x-api-key": API_KEY
+      },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Error");
+    return data;
+  }
+
+  function fillDatalist(){
+    const dl = document.getElementById("usersList");
+    dl.innerHTML = USERS_SORTED.map(n => `<option value="${n}"></option>`).join("");
+  }
+
+  function renderFeed(items){
+    const feed = document.getElementById("feed");
+    feed.innerHTML = "";
+
+    // feed aleatorio (sin jerarquías)
+    const randomized = shuffle(items);
+
+    randomized.forEach(r=>{
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="top">
+          <div class="who">
+            <div class="avatar"><img src="${avatarUrl(r.recognizedUser)}" alt="avatar"/></div>
+            <div style="min-width:0">
+              <div class="name">${r.recognizedUser}</div>
+              <div class="meta">Reconocido por: ${r.recognizedBy}</div>
+            </div>
+          </div>
+          <div class="badge">+${r.points || 10} pts</div>
+        </div>
+        <div class="reason">${r.reason}</div>
+      `;
+      feed.appendChild(card);
+    });
+
+    document.getElementById("kpiCount").textContent = items.length;
+  }
+
+  function renderLeaderboard(rows){
+    const box = document.getElementById("leaderboard");
+    box.innerHTML = "";
+
+    const top10 = rows.slice(0,10);
+
+    top10.forEach((x, idx)=>{
+      const row = document.createElement("div");
+      row.className = "lbRow";
+      row.innerHTML = `
+        <div class="lbLeft">
+          <div class="miniAvatar"><img src="${avatarUrl(x.name)}" alt="avatar"/></div>
+          <div class="lbName">#${idx+1} ${x.name}</div>
+        </div>
+        <div class="pts">${x.points}</div>
+      `;
+      box.appendChild(row);
+    });
+
+    document.getElementById("kpiTop").textContent = top10[0] ? top10[0].points : "0";
+  }
+
+  async function loadAll(){
+    try{
+      document.getElementById("statusPill").textContent = "Conectado ✅";
+
+      const feed = await apiGet(API);
+      renderFeed(feed);
+
+      const lb = await apiGet(API + "/leaderboard");
+      renderLeaderboard(lb);
+
+    }catch(e){
+      document.getElementById("statusPill").textContent = "Error ❌";
+      toast(e.message || "Error");
+    }
+  }
+
+  async function addRecognition(){
+    const btn = document.getElementById("btnSend");
+    btn.disabled = true;
+
+    try{
+      const recognizedUser = document.getElementById("recognizedUser").value.trim();
+      const recognizedBy   = document.getElementById("recognizedBy").value.trim();
+      const reason         = document.getElementById("reason").value.trim();
+
+      if(!recognizedUser || !recognizedBy || !reason){
+        toast("Completa los 3 campos 🙂");
+        return;
+      }
+
+      // validación rápida: que exista el nombre en la lista (evita variaciones)
+      if(!USERS.includes(recognizedUser)){
+        toast("Selecciona un nombre válido del autocompletado 👀");
+        return;
+      }
+      if(!USERS.includes(recognizedBy)){
+        toast("Tu nombre también debe ser de la lista (autocompleta) 👀");
+        return;
+      }
+
+      await apiPost(API, { recognizedUser, recognizedBy, reason });
+      toast("✅ Reconocimiento enviado");
+
+      document.getElementById("reason").value = "";
+      await loadAll();
+
+    }catch(e){
+      toast(e.message || "Error");
+    }finally{
+      btn.disabled = false;
+    }
+  }
+
+  fillDatalist();
+  loadAll();
+  // refresco para que se sienta “vivo”
+  setInterval(loadAll, 30000);
 </script>
-
 </body>
 </html>
