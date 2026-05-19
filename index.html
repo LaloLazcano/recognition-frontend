@@ -1,25 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Recognition Wall</title>
 
   <style>
     :root{
-      --bg:#f4f7fb;
+      --schneider-green:#3DCD58;
+      --navy:#243447;
+      --bg:#f5f7fb;
       --card:#ffffff;
       --text:#0f172a;
       --muted:#64748b;
       --border:#e2e8f0;
-      --shadow:0 10px 30px rgba(15,23,42,.08);
-      --shadow2:0 6px 16px rgba(15,23,42,.08);
+      --shadow:0 12px 28px rgba(15,23,42,.10);
+      --shadow2:0 6px 14px rgba(15,23,42,.08);
       --radius:18px;
-
-      --se-navy:#243447;
-      --se-green:#22c55e;
-      --se-green2:#16a34a;
-      --se-lime:#a3e635;
     }
 
     *{box-sizing:border-box}
@@ -27,37 +24,43 @@
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
       background:
-        radial-gradient(1200px 500px at 10% -10%, rgba(34,197,94,.18), transparent 60%),
-        radial-gradient(1000px 420px at 110% 0%, rgba(163,230,53,.16), transparent 55%),
+        radial-gradient(900px 380px at 10% -10%, rgba(61,205,88,.20), transparent 60%),
+        radial-gradient(900px 380px at 110% 0%, rgba(61,205,88,.14), transparent 55%),
         var(--bg);
       color:var(--text);
     }
 
     header{
       position:sticky; top:0; z-index:10;
-      background: linear-gradient(90deg, #1f2a38, #243447 40%, #1f2a38);
-      color:#fff;
+      background:linear-gradient(90deg, #1f2a38, var(--navy) 40%, #1f2a38);
       padding:14px 18px;
       display:flex;
-      align-items:center;
       justify-content:space-between;
+      align-items:center;
       border-bottom:1px solid rgba(255,255,255,.08);
     }
-    .title{
-      display:flex; align-items:center; gap:10px;
-      font-weight:900;
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      font-weight:950;
       letter-spacing:.2px;
+      font-size:18px;
     }
-    .title .chip{
+    .brand .title{
+      color:var(--schneider-green); /* ✅ verde Schneider */
+      font-size:20px;
+    }
+    .chip{
       font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
+      color:#fff;
       background:rgba(255,255,255,.12);
       border:1px solid rgba(255,255,255,.18);
+      border-radius:999px;
+      padding:6px 10px;
       font-weight:800;
-      display:flex; align-items:center; gap:6px;
+      display:flex; gap:6px; align-items:center;
     }
     .status{
+      color:#fff;
       font-size:12px;
       padding:6px 10px;
       border-radius:999px;
@@ -67,20 +70,20 @@
     }
 
     .wrap{
-      max-width:1200px;
+      max-width:1280px;
       margin:18px auto;
       padding:0 16px 28px;
       display:grid;
-      grid-template-columns: 2.2fr 1fr;
+      grid-template-columns: 3fr 1fr;
       gap:16px;
     }
 
     .panel{
-      background:rgba(255,255,255,.8);
+      background:rgba(255,255,255,.84);
       backdrop-filter: blur(8px);
       border:1px solid var(--border);
       border-radius:var(--radius);
-      box-shadow:var(--shadow2);
+      box-shadow: var(--shadow2);
       overflow:hidden;
     }
     .panel h2{
@@ -89,34 +92,38 @@
       border-bottom:1px solid var(--border);
       font-size:13px;
       color:var(--muted);
-      font-weight:900;
+      font-weight:950;
       text-transform:uppercase;
-      letter-spacing:.3px;
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
+      letter-spacing:.35px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
     }
     .panel h2 small{
       font-size:12px;
       font-weight:800;
-      color:var(--muted);
       text-transform:none;
       letter-spacing:0;
+      color:var(--muted);
     }
 
-    /* Composer */
+    /* Composer (input arriba, botones abajo) */
     .composer{
       padding:16px;
       display:grid;
-      gap:10px;
+      gap:12px;
     }
     .row{
       display:grid;
-      grid-template-columns: 1fr 1fr 1.2fr auto;
+      grid-template-columns: 1fr 1fr;
       gap:10px;
-      align-items:end;
     }
-    .field{display:flex; flex-direction:column; gap:6px;}
-    label{font-size:12px; color:var(--muted); font-weight:800;}
+    .field{
+      display:flex; flex-direction:column; gap:6px;
+    }
+    label{
+      font-size:12px; color:var(--muted); font-weight:900;
+    }
     input, textarea{
       width:100%;
       border:1px solid var(--border);
@@ -126,33 +133,62 @@
       background:#fff;
       font-size:14px;
     }
+    textarea{
+      min-height: 120px; /* ✅ caja más grande para ver comentario completo */
+      resize: vertical;
+    }
     input:focus, textarea:focus{
       border-color:#94a3b8;
       box-shadow:0 0 0 3px rgba(148,163,184,.25);
     }
-    textarea{
-      min-height:58px;
-      resize:vertical;
+
+    .valueBar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .valueButtons{
+      display:flex; flex-wrap:wrap; gap:8px;
+    }
+    .vbtn{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:999px;
+      padding:8px 10px;
+      font-weight:900;
+      font-size:12px;
+      cursor:pointer;
+      display:flex; gap:6px; align-items:center;
+      box-shadow: var(--shadow2);
+      user-select:none;
+    }
+    .vbtn.active{
+      border-color: rgba(61,205,88,.6);
+      box-shadow:0 0 0 3px rgba(61,205,88,.18);
     }
 
     .btn{
       border:0;
       border-radius:14px;
-      padding:11px 14px;
-      background: linear-gradient(180deg, var(--se-green), var(--se-green2));
-      color:#fff;
+      padding:12px 14px;
+      background:linear-gradient(180deg, var(--schneider-green), #26b84f);
+      color:#0b1220;
       font-weight:950;
       cursor:pointer;
       box-shadow: var(--shadow2);
       display:flex; align-items:center; gap:8px;
-      height:42px;
     }
     .btn:hover{ filter:brightness(1.03); transform: translateY(-1px); }
     .btn:disabled{ opacity:.65; cursor:not-allowed; transform:none; }
 
     .hint{
-      font-size:12px; color:var(--muted);
-      display:flex; gap:10px; flex-wrap:wrap;
+      font-size:12px;
+      color:var(--muted);
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
       align-items:center;
     }
     .pill{
@@ -161,128 +197,184 @@
       border-radius:999px;
       border:1px solid var(--border);
       background:#fff;
-      font-weight:800;
+      font-weight:900;
     }
 
-    /* Feed grid (4 columns) */
+    /* Feed grid 4 columnas */
     .feed{
       padding:14px;
       display:grid;
-      gap:12px;
+      gap:14px;
       grid-template-columns: repeat(4, minmax(0,1fr));
     }
 
-    .card{
-      background: #ffffff;
-      border:1px solid var(--border);
-      border-radius:18px;
-      box-shadow: var(--shadow2);
-      padding:12px;
+    /* Tarjeta estilo “cuadro grande con imagen” */
+    .tile{
+      border-radius:20px;
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      border:1px solid rgba(15,23,42,.06);
+      position:relative;
+      min-height: 260px;
       display:flex;
       flex-direction:column;
-      gap:10px;
-      min-height: 150px;
-      transition: transform .12s ease, box-shadow .12s ease;
+      justify-content:space-between;
+      transform: translateZ(0);
+      transition: transform .14s ease, box-shadow .14s ease;
+      background:#111827;
     }
-    .card:hover{
-      transform: translateY(-2px);
-      box-shadow: var(--shadow);
+    .tile:hover{
+      transform: translateY(-3px);
+      box-shadow: 0 16px 34px rgba(15,23,42,.14);
     }
 
-    .top{
+    .tileTop{
+      padding:14px 14px 10px;
       display:flex;
-      align-items:center;
+      align-items:flex-start;
       justify-content:space-between;
       gap:10px;
+      color:#fff;
     }
     .who{
-      display:flex; align-items:center; gap:10px;
+      display:flex; gap:10px; align-items:center;
       min-width:0;
     }
     .avatar{
       width:44px; height:44px;
-      border-radius:16px;
-      border:1px solid var(--border);
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.25);
       overflow:hidden;
+      background:rgba(255,255,255,.12);
       flex:0 0 auto;
-      position:relative;
-      background:#fff;
     }
-    .avatar img{
-      width:100%; height:100%;
-      object-fit:cover;
-    }
-    /* pequeño toque "sustentable" */
-    .avatar::after{
-      content:"🌿";
-      position:absolute;
-      right:-6px; bottom:-8px;
-      font-size:18px;
-      filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
-    }
+    .avatar img{ width:100%; height:100%; object-fit:cover; }
 
-    .name{
+    .names{
+      min-width:0;
+    }
+    .recognized{
       font-weight:950;
       font-size:14px;
+      white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      white-space:nowrap;
-      max-width: 180px;
+      max-width: 170px;
     }
-    .meta{
+    .by{
       font-size:12px;
-      color:var(--muted);
-      margin-top:2px;
+      opacity:.9;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
+      max-width: 170px;
     }
-    .badge{
+
+    .tag{
       font-size:12px;
       font-weight:950;
-      padding:6px 10px;
+      padding:7px 10px;
       border-radius:999px;
-      background: rgba(34,197,94,.12);
-      border:1px solid rgba(34,197,94,.25);
-      color:#166534;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.20);
       white-space:nowrap;
     }
 
-    .reason{
+    .tileCenter{
+      padding:0 14px 12px;
+      color:#fff;
+    }
+    .comment{
       font-size:14px;
       line-height:1.35;
-      color:var(--text);
+      text-shadow:0 8px 18px rgba(0,0,0,.25);
+      /* ✅ mostramos más texto sin cortar “feo” */
       display:-webkit-box;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 5;
       -webkit-box-orient: vertical;
       overflow:hidden;
     }
 
-    /* Sidebar */
+    .tileBottom{
+      padding:12px 14px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,.22));
+      color:#fff;
+    }
+    .actions{
+      display:flex; gap:10px; align-items:center;
+    }
+    .likeBtn{
+      border:1px solid rgba(255,255,255,.25);
+      background:rgba(255,255,255,.10);
+      color:#fff;
+      border-radius:999px;
+      padding:8px 10px;
+      font-weight:950;
+      font-size:12px;
+      cursor:pointer;
+      display:flex; gap:6px; align-items:center;
+    }
+    .likeBtn:hover{ background:rgba(255,255,255,.16); }
+    .pts{
+      font-size:12px;
+      font-weight:950;
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(61,205,88,.18);
+      border:1px solid rgba(61,205,88,.35);
+      color:#eaffef;
+      white-space:nowrap;
+    }
+
+    /* Sidebar Leaderboard */
     .side{
       padding:12px 14px;
       display:grid;
       gap:12px;
     }
-    .kpis{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-    }
-    .kpi{
-      background:#fff;
-      border:1px solid var(--border);
-      border-radius:16px;
+    .topCard{
+      background:linear-gradient(135deg, rgba(61,205,88,.22), rgba(61,205,88,.08));
+      border:1px solid rgba(61,205,88,.35);
+      border-radius:18px;
       padding:12px;
       box-shadow: var(--shadow2);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
     }
-    .kpi .t{font-size:12px; color:var(--muted); font-weight:900;}
-    .kpi .v{font-size:20px; font-weight:950; margin-top:6px;}
+    .topLeft{ display:flex; gap:10px; align-items:center; min-width:0; }
+    .miniAvatar{
+      width:42px; height:42px;
+      border-radius:16px;
+      border:1px solid rgba(15,23,42,.08);
+      overflow:hidden;
+      background:#fff;
+      flex:0 0 auto;
+    }
+    .miniAvatar img{ width:100%; height:100%; object-fit:cover; }
+    .topName{
+      font-weight:950;
+      font-size:13px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:180px;
+    }
+    .topPts{
+      font-weight:950;
+      font-size:14px;
+      white-space:nowrap;
+    }
 
     .lb{
       background:#fff;
       border:1px solid var(--border);
-      border-radius:16px;
+      border-radius:18px;
       overflow:hidden;
       box-shadow: var(--shadow2);
     }
@@ -294,26 +386,29 @@
       padding:10px 12px;
       border-top:1px solid var(--border);
     }
-    .lbRow:first-child{border-top:0}
-    .lbLeft{display:flex; align-items:center; gap:10px; min-width:0;}
-    .miniAvatar{
-      width:32px; height:32px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      overflow:hidden;
-      flex:0 0 auto;
-      background:#fff;
+    .lbRow:first-child{ border-top:0; }
+    .lbLeft{
+      display:flex; align-items:center; gap:10px; min-width:0;
     }
-    .miniAvatar img{width:100%; height:100%; object-fit:cover;}
-    .lbName{
+    .lbRank{
       font-weight:950;
+      color:#0f172a;
+      width:26px;
+      text-align:center;
+    }
+    .lbName{
+      font-weight:900;
       font-size:13px;
+      white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      white-space:nowrap;
-      max-width: 170px;
+      max-width:170px;
     }
-    .pts{font-weight:950; font-size:13px;}
+    .lbPts{
+      font-weight:950;
+      font-size:13px;
+      white-space:nowrap;
+    }
 
     .toast{
       position:fixed;
@@ -330,15 +425,21 @@
       font-size:13px;
       z-index:50;
     }
-    .toast.show{opacity:1; transform:translateY(0);}
+    .toast.show{ opacity:1; transform:translateY(0); }
+
+    /* IMPACT backgrounds (data-uri svg para look “llamativo” sin depender de imágenes externas) */
+    .bg-inclusion { background: linear-gradient(135deg, #7c3aed, #22c55e); }
+    .bg-mastery   { background: linear-gradient(135deg, #2563eb, #22c55e); }
+    .bg-purpose   { background: linear-gradient(135deg, #0ea5e9, #22c55e); }
+    .bg-action    { background: linear-gradient(135deg, #f97316, #22c55e); }
+    .bg-curiosity { background: linear-gradient(135deg, #ec4899, #22c55e); }
+    .bg-teamwork  { background: linear-gradient(135deg, #10b981, #0ea5e9); }
 
     /* Responsive */
-    @media (max-width: 1150px){
+    @media (max-width: 1200px){
       .feed{ grid-template-columns: repeat(3, minmax(0,1fr)); }
-      .row{ grid-template-columns: 1fr 1fr 1.2fr; }
-      .btn{ grid-column: 1 / -1; width:100%; justify-content:center; }
     }
-    @media (max-width: 900px){
+    @media (max-width: 950px){
       .wrap{ grid-template-columns: 1fr; }
       .feed{ grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
@@ -351,10 +452,11 @@
 
 <body>
 <header>
-  <div class="title">
-    Recognition Wall 🚀
-    <span class="chip">🌿 Sustentable</span>
-    <span class="chip">4 días</span>
+  <div class="brand">
+    <div class="title">Recognition Wall 🚀</div>
+    <div class="chip">🌿 Sustentable</div>
+    <div class="chip">4 días</div>
+    <div class="chip">IMPACT</div>
   </div>
   <div class="status" id="statusPill">Conectando…</div>
 </header>
@@ -365,12 +467,11 @@
   <section class="panel">
     <h2>
       Pizarrón principal
-      <small>sin jerarquías · 4 columnas</small>
+      <small>mosaico · 4 columnas · sin jerarquías</small>
     </h2>
 
     <div class="composer">
       <div class="row">
-
         <div class="field">
           <label>¿A quién reconoces?</label>
           <input id="recognizedUser" list="usersList" placeholder="Escribe para autocompletar…" />
@@ -381,44 +482,36 @@
           <label>¿Quién reconoce?</label>
           <input id="recognizedBy" list="usersList" placeholder="Escribe tu nombre…" />
         </div>
+      </div>
 
-        <div class="field">
-          <label>Comentario / felicitación</label>
-          <input id="reason" placeholder="Ej. Gracias por apoyar hoy en… 🙌" />
-        </div>
+      <div class="field">
+        <label>Comentario / felicitación</label>
+        <textarea id="reason" placeholder="Escribe tu felicitación completa aquí…"></textarea>
+      </div>
 
-        <button class="btn" id="btnSend" onclick="addRecognition()">✨ Reconocer</button>
+      <div class="valueBar">
+        <div class="hint"><strong>¿Qué valor de Schneider estás reconociendo?</strong></div>
+        <div class="valueButtons" id="valueButtons"></div>
+        <button class="btn" id="btnSend" onclick="addRecognition()">✨ Publicar reconocimiento</button>
       </div>
 
       <div class="hint">
-        <span class="pill">📌 Los comentarios duran 4 días</span>
-        <span class="pill">⏳ Misma persona: 7 días</span>
-        <span class="pill">🎲 El mural se muestra en orden aleatorio</span>
+        <span class="pill">📌 Visible 4 días</span>
+        <span class="pill">⏳ Cooldown 7 días por persona</span>
+        <span class="pill">👍 Likes habilitados</span>
       </div>
     </div>
 
     <div class="feed" id="feed"></div>
   </section>
 
-  <!-- SIDE -->
+  <!-- RIGHT -->
   <aside class="panel">
-    <h2>🏆 Marcador</h2>
+    <h2>🏆 Tablero de clasificación</h2>
     <div class="side">
-
-      <div class="kpis">
-        <div class="kpi">
-          <div class="t">Reconocimientos visibles</div>
-          <div class="v" id="kpiCount">–</div>
-        </div>
-        <div class="kpi">
-          <div class="t">Top puntos</div>
-          <div class="v" id="kpiTop">–</div>
-        </div>
-      </div>
-
+      <div class="topCard" id="topCard"></div>
       <div class="lb" id="leaderboard"></div>
-
-      <div class="hint">El ranking se ordena por puntos (no por nombre).</div>
+      <div class="hint">Ordenado por puntos (no por nombre).</div>
     </div>
   </aside>
 
@@ -427,11 +520,14 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  // ====== CONFIG ======
-  const API = "https://recognition-backend-lz5r.onrender.com/recognitions";
-  const API_KEY = "recognition123secure"; // <-- pon tu API key real
+  // ===== CONFIG =====
+  const API_BASE = "https://recognition-backend-lz5r.onrender.com";
+  const API_RECOG = `${API_BASE}/recognitions`;
+  const API_LB = `${API_BASE}/recognitions/leaderboard`;
 
-  // Lista ORIGINAL (no la ordeno aquí)
+  // ✅ Pega tu key aquí (la que me compartiste)
+  const API_KEY = "__PON_TU_API_KEY_AQUI__";
+
   const USERS = [
     "Edgar Díaz","Fernanda Sedano","Hugo Rincón","Fernanda Silva","Silvia Medellín",
     "Carlos Uh","Edgar Pérez","Eduardo Carrillo","Eduardo Ríos","Gustavo Baez",
@@ -446,15 +542,19 @@
     "Luis García","Merith Martínez","Sergio Olvera","Sonny Castro"
   ];
 
-  // Autocomplete: lo muestro alfabetizado en el datalist (solo para sugerencias)
+  // Autocomplete alfabetizado (solo para sugerencias)
   const USERS_SORTED = [...USERS].sort((a,b)=>a.localeCompare(b,'es'));
 
-  // Avatar sustentable (iniciales + verde)
-  // UI Avatars permite name, rounded, background, color, size, bold, etc. [4](https://ui-avatars.com/)
-  function avatarUrl(name){
-    const n = encodeURIComponent(name || "SE");
-    return `https://ui-avatars.com/api/?name=${n}&rounded=true&background=0D8A3B&color=fff&size=128&bold=true`;
-  }
+  const IMPACT = [
+    { key:"inclusion", label:"Inclusion", emoji:"🤝", bg:"bg-inclusion" },
+    { key:"mastery", label:"Mastery", emoji:"🏅", bg:"bg-mastery" },
+    { key:"purpose", label:"Purpose", emoji:"🎯", bg:"bg-purpose" },
+    { key:"action", label:"Action", emoji:"⚡", bg:"bg-action" },
+    { key:"curiosity", label:"Curiosity", emoji:"🔍", bg:"bg-curiosity" },
+    { key:"teamwork", label:"Teamwork", emoji:"👥", bg:"bg-teamwork" },
+  ];
+
+  let selectedImpact = "teamwork";
 
   function toast(msg){
     const t = document.getElementById("toast");
@@ -463,7 +563,13 @@
     setTimeout(()=>t.classList.remove("show"), 2600);
   }
 
-  // shuffle para que no exista sensación de "ranking" en el feed
+  // Avatar “sustentable” (iniciales + fondo verde) usando UI Avatars params (name, rounded, background, etc.) [1](https://ui-avatars.com/)
+  function avatarUrl(name){
+    const n = encodeURIComponent(name || "SE");
+    return `https://ui-avatars.com/api/?name=${n}&rounded=true&background=0D8A3B&color=fff&size=128&bold=true`;
+  }
+
+  // Shuffle para quitar jerarquía visual del feed
   function shuffle(arr){
     const a = [...arr];
     for (let i=a.length-1; i>0; i--){
@@ -499,67 +605,107 @@
     dl.innerHTML = USERS_SORTED.map(n => `<option value="${n}"></option>`).join("");
   }
 
+  function renderImpactButtons(){
+    const box = document.getElementById("valueButtons");
+    box.innerHTML = "";
+    IMPACT.forEach(v=>{
+      const b = document.createElement("div");
+      b.className = "vbtn" + (v.key===selectedImpact ? " active":"");
+      b.innerHTML = `${v.emoji} ${v.label}`;
+      b.onclick = ()=>{
+        selectedImpact = v.key;
+        renderImpactButtons();
+      };
+      box.appendChild(b);
+    });
+  }
+
+  function impactMeta(key){
+    return IMPACT.find(x=>x.key===key) || IMPACT[5];
+  }
+
   function renderFeed(items){
     const feed = document.getElementById("feed");
     feed.innerHTML = "";
 
-    // feed aleatorio (sin jerarquías)
+    // sin jerarquía: shuffle cada carga
     const randomized = shuffle(items);
 
     randomized.forEach(r=>{
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <div class="top">
+      const meta = impactMeta(r.impactValue);
+      const tile = document.createElement("div");
+      tile.className = `tile ${meta.bg}`;
+      tile.innerHTML = `
+        <div class="tileTop">
           <div class="who">
             <div class="avatar"><img src="${avatarUrl(r.recognizedUser)}" alt="avatar"/></div>
-            <div style="min-width:0">
-              <div class="name">${r.recognizedUser}</div>
-              <div class="meta">Reconocido por: ${r.recognizedBy}</div>
+            <div class="names">
+              <div class="recognized">${r.recognizedUser}</div>
+              <div class="by">reconocido por ${r.recognizedBy}</div>
             </div>
           </div>
-          <div class="badge">+${r.points || 10} pts</div>
+          <div class="tag">${meta.emoji} ${meta.label}</div>
         </div>
-        <div class="reason">${r.reason}</div>
-      `;
-      feed.appendChild(card);
-    });
 
-    document.getElementById("kpiCount").textContent = items.length;
+        <div class="tileCenter">
+          <div class="comment">${r.reason}</div>
+        </div>
+
+        <div class="tileBottom">
+          <div class="actions">
+            <button class="likeBtn" onclick="like('${r.id}')">👍 Like <span id="likes-${r.id}">${r.likes || 0}</span></button>
+          </div>
+          <div class="pts">+${r.points || 10} pts</div>
+        </div>
+      `;
+      feed.appendChild(tile);
+    });
   }
 
   function renderLeaderboard(rows){
-    const box = document.getElementById("leaderboard");
-    box.innerHTML = "";
+    const top = rows[0];
+    const topCard = document.getElementById("topCard");
+    const lb = document.getElementById("leaderboard");
 
-    const top10 = rows.slice(0,10);
+    if (top){
+      topCard.innerHTML = `
+        <div class="topLeft">
+          <div class="miniAvatar"><img src="${avatarUrl(top.name)}" alt="avatar"/></div>
+          <div style="min-width:0">
+            <div class="topName">🥇 ${top.name}</div>
+            <div class="hint">Top del tablero</div>
+          </div>
+        </div>
+        <div class="topPts">${top.points} pts</div>
+      `;
+    } else {
+      topCard.innerHTML = `<div class="hint">Aún no hay puntos</div>`;
+    }
 
-    top10.forEach((x, idx)=>{
+    lb.innerHTML = "";
+    rows.slice(0,10).forEach((x, idx)=>{
       const row = document.createElement("div");
       row.className = "lbRow";
       row.innerHTML = `
         <div class="lbLeft">
+          <div class="lbRank">${idx+1}</div>
           <div class="miniAvatar"><img src="${avatarUrl(x.name)}" alt="avatar"/></div>
-          <div class="lbName">#${idx+1} ${x.name}</div>
+          <div class="lbName">${x.name}</div>
         </div>
-        <div class="pts">${x.points}</div>
+        <div class="lbPts">${x.points}</div>
       `;
-      box.appendChild(row);
+      lb.appendChild(row);
     });
-
-    document.getElementById("kpiTop").textContent = top10[0] ? top10[0].points : "0";
   }
 
   async function loadAll(){
     try{
       document.getElementById("statusPill").textContent = "Conectado ✅";
-
-      const feed = await apiGet(API);
+      const feed = await apiGet(API_RECOG);
       renderFeed(feed);
 
-      const lb = await apiGet(API + "/leaderboard");
+      const lb = await apiGet(API_LB);
       renderLeaderboard(lb);
-
     }catch(e){
       document.getElementById("statusPill").textContent = "Error ❌";
       toast(e.message || "Error");
@@ -572,27 +718,30 @@
 
     try{
       const recognizedUser = document.getElementById("recognizedUser").value.trim();
-      const recognizedBy   = document.getElementById("recognizedBy").value.trim();
-      const reason         = document.getElementById("reason").value.trim();
+      const recognizedBy = document.getElementById("recognizedBy").value.trim();
+      const reason = document.getElementById("reason").value.trim();
 
       if(!recognizedUser || !recognizedBy || !reason){
-        toast("Completa los 3 campos 🙂");
+        toast("Completa los campos 🙂");
         return;
       }
-
-      // validación rápida: que exista el nombre en la lista (evita variaciones)
       if(!USERS.includes(recognizedUser)){
-        toast("Selecciona un nombre válido del autocompletado 👀");
+        toast("Selecciona un nombre válido (autocompleta) 👀");
         return;
       }
       if(!USERS.includes(recognizedBy)){
-        toast("Tu nombre también debe ser de la lista (autocompleta) 👀");
+        toast("Tu nombre también debe ser de la lista 👀");
         return;
       }
 
-      await apiPost(API, { recognizedUser, recognizedBy, reason });
-      toast("✅ Reconocimiento enviado");
+      await apiPost(API_RECOG, {
+        recognizedUser,
+        recognizedBy,
+        reason,
+        impactValue: selectedImpact
+      });
 
+      toast("✅ Reconocimiento publicado");
       document.getElementById("reason").value = "";
       await loadAll();
 
@@ -603,9 +752,19 @@
     }
   }
 
+  async function like(id){
+    try{
+      const data = await apiPost(`${API_RECOG}/${id}/like`, {});
+      const el = document.getElementById(`likes-${id}`);
+      if (el) el.textContent = data.likes;
+    }catch(e){
+      toast(e.message || "No se pudo dar like");
+    }
+  }
+
   fillDatalist();
+  renderImpactButtons();
   loadAll();
-  // refresco para que se sienta “vivo”
   setInterval(loadAll, 30000);
 </script>
 </body>
