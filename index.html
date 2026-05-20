@@ -7,7 +7,7 @@
 
   <style>
     :root{
-      --schneider-green:#3DCD58; /* [2](https://www.brandcolorcode.com/schneider-electric) */
+      --schneider-green:#3DCD58; /* [1](https://engage.cloud.microsoft/main/threads/eyJfdHlwZSI6IlRocmVhZCIsImlkIjoiMzcxMzAxNTAxMTY0NzQ4OCJ9) */
       --navy:#243447;
       --bg:#f5f7fb;
       --card:#ffffff;
@@ -71,19 +71,19 @@
       white-space:nowrap;
     }
 
-    /* ✅ Aprovecha pantalla */
+    /* ✅ Layout: IZQ (Pendientes) | CENTRO (Main) | DER (Leaderboard) */
     .wrap{
-      width: min(96vw, 1600px);
+      width: min(98vw, 1680px);
       margin:16px auto;
       padding:0 10px 28px;
       display:grid;
-      grid-template-columns: 3.2fr 1.2fr;
+      grid-template-columns: 1.05fr 3.0fr 1.15fr;
       gap:16px;
       align-items:start;
     }
 
     .panel{
-      background:rgba(255,255,255,.86);
+      background:rgba(255,255,255,.88);
       backdrop-filter: blur(8px);
       border:1px solid var(--border);
       border-radius:var(--radius);
@@ -140,7 +140,7 @@
       font-size:14px;
     }
     textarea{
-      min-height: 180px; /* ✅ más grande */
+      min-height: 180px; /* caja grande */
       resize: vertical;
     }
     input:focus, textarea:focus{
@@ -225,7 +225,7 @@
       box-shadow: var(--shadow);
       border:1px solid rgba(15,23,42,.06);
       position:relative;
-      min-height: 340px; /* ✅ más alto */
+      min-height: 300px;
       display:flex;
       flex-direction:column;
       justify-content:space-between;
@@ -263,7 +263,7 @@
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width: 260px;
+      max-width: 220px;
     }
     .by{
       font-size:12px;
@@ -271,7 +271,7 @@
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width: 260px;
+      max-width: 220px;
     }
 
     .tag{
@@ -284,20 +284,18 @@
       white-space:nowrap;
     }
 
+    /* ✅ SIN RECORTE: la tarjeta crece y el texto envuelve */
     .tileCenter{
       padding:0 14px 12px;
       color:#fff;
       flex: 1;
-      display:flex;
     }
-    /* ✅ SIN RECORTE real */
     .comment{
       font-size:14px;
       line-height:1.45;
       white-space: pre-wrap;
       word-break: break-word;
       overflow: visible;
-      width:100%;
     }
 
     .tileBottom{
@@ -396,7 +394,7 @@
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width:220px;
+      max-width:190px;
     }
     .lbPts{
       font-weight:950;
@@ -404,7 +402,6 @@
       white-space:nowrap;
     }
 
-    /* Clickable “pendientes” */
     .needRow{ cursor:pointer; }
     .needRow:hover{ background:#f8fafc; }
     .needBadge{
@@ -444,10 +441,11 @@
     .bg-teamwork  { background: linear-gradient(135deg, #10b981, #0ea5e9); }
 
     /* Responsive */
-    @media (max-width: 1400px){
+    @media (max-width: 1500px){
+      .wrap{ grid-template-columns: 1.05fr 2.6fr 1.15fr; }
       .feed{ grid-template-columns: repeat(3, minmax(0,1fr)); }
     }
-    @media (max-width: 1050px){
+    @media (max-width: 1200px){
       .wrap{ grid-template-columns: 1fr; }
       .feed{ grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
@@ -471,7 +469,22 @@
 
 <div class="wrap">
 
-  <!-- MAIN -->
+  <!-- LEFT: Pendientes -->
+  <aside class="panel">
+    <h2>
+      Pendientes
+      <small id="needCount">—</small>
+    </h2>
+    <div class="side">
+      <div class="block">
+        <div class="blockTitle">🟢 Pendientes de reconocimiento</div>
+        <div id="needsList"></div>
+      </div>
+      <div class="hint">Tip: da clic en un nombre para autollenar “¿A quién reconoces?”</div>
+    </div>
+  </aside>
+
+  <!-- CENTER: Main -->
   <section class="panel">
     <h2>
       Pizarrón principal
@@ -514,24 +527,18 @@
     <div class="feed" id="feed"></div>
   </section>
 
-  <!-- RIGHT -->
+  <!-- RIGHT: Leaderboard -->
   <aside class="panel">
-    <h2>Panel lateral</h2>
+    <h2>
+      Ranking
+      <small id="lbCount">—</small>
+    </h2>
     <div class="side">
-
-      <!-- Leaderboard -->
       <div class="block">
-        <div class="blockTitle">🏆 Tablero de clasificación <span id="lbCount"></span></div>
+        <div class="blockTitle">🏆 Tablero de clasificación</div>
         <div id="leaderboard"></div>
       </div>
-
-      <!-- Needs Recognition -->
-      <div class="block">
-        <div class="blockTitle">🟢 Pendientes de reconocimiento <span id="needCount"></span></div>
-        <div id="needsList"></div>
-      </div>
-
-      <div class="hint">Tip: da clic en un nombre pendiente para autollenar “¿A quién reconoces?”</div>
+      <div class="hint">Ordenado por puntos (no por nombre).</div>
     </div>
   </aside>
 
@@ -541,9 +548,9 @@
 
 <script>
   // ======================================================
-  // ✅✅✅ CONFIG (AQUÍ PEGAS TU API KEY)
+  // ✅ CONFIG (PEGA TU API KEY AQUÍ)
   // ======================================================
-  const API_KEY = "recognition123secure"; // <-- pega tu key aquí
+  const API_KEY = "recognition123secure";
 
   const API_BASE = "https://recognition-backend-lz5r.onrender.com";
   const API_RECOG = `${API_BASE}/recognitions`;
@@ -582,10 +589,46 @@
     setTimeout(()=>t.classList.remove("show"), 2600);
   }
 
-  // UI Avatars: name, rounded, background, color, size, bold, etc. [1](https://ui-avatars.com/)
-  function avatarUrl(name){
-    const n = encodeURIComponent(name || "SE");
-    return `https://ui-avatars.com/api/?name=${n}&rounded=true&background=0D8A3B&color=fff&size=128&bold=true`;
+  // ✅ “Imagen” eco (no solo iniciales): SVG embebido tipo “eco icon”
+  // (0 dependencias externas, y se ve como imagen real)
+  function ecoAvatarDataUrl(name){
+    const icons = [
+      // hoja
+      (bg)=>`<path d="M18 45c16-6 26-18 28-34 1-8-4-11-12-8C18 8 10 24 8 35c-1 7 4 12 10 10z" fill="${bg}"/><path d="M10 36c8-8 16-14 28-20" stroke="#0b1220" stroke-opacity=".25" stroke-width="3" fill="none" stroke-linecap="round"/>`,
+      // planeta
+      (bg)=>`<circle cx="28" cy="28" r="18" fill="${bg}"/><path d="M10 30c6-6 30-8 36 0" stroke="#0b1220" stroke-opacity=".22" stroke-width="3" fill="none"/><path d="M14 22c8 6 20 6 28 0" stroke="#0b1220" stroke-opacity=".22" stroke-width="3" fill="none"/>`,
+      // turbina
+      (bg)=>`<circle cx="28" cy="14" r="6" fill="${bg}"/><path d="M28 20v26" stroke="${bg}" stroke-width="5" stroke-linecap="round"/><path d="M28 14l-18 10 18-2z" fill="${bg}"/><path d="M28 14l18 10-6-16z" fill="${bg}"/><path d="M28 14l0-20 6 16z" fill="${bg}"/>`,
+      // reciclaje
+      (bg)=>`<path d="M22 8l6 10h-7l-4-7z" fill="${bg}"/><path d="M34 14l-10 6 4-6z" fill="${bg}"/><path d="M38 26l-10 0 6-4z" fill="${bg}"/><path d="M24 46l-6-10h7l4 7z" fill="${bg}"/><path d="M14 38l10-6-4 6z" fill="${bg}"/><path d="M10 26l10 0-6 4z" fill="${bg}"/>`,
+      // panel solar
+      (bg)=>`<rect x="12" y="18" width="32" height="22" rx="4" fill="${bg}"/><path d="M12 26h32M12 32h32M20 18v22M28 18v22M36 18v22" stroke="#0b1220" stroke-opacity=".18" stroke-width="2"/>`,
+      // batería
+      (bg)=>`<rect x="14" y="16" width="28" height="24" rx="5" fill="${bg}"/><rect x="22" y="12" width="12" height="6" rx="2" fill="${bg}"/><path d="M22 28h12" stroke="#0b1220" stroke-opacity=".25" stroke-width="3" stroke-linecap="round"/>`
+    ];
+
+    // hash simple
+    let h = 0;
+    for (let i=0;i<name.length;i++) h = (h*31 + name.charCodeAt(i)) >>> 0;
+    const idx = h % icons.length;
+
+    const greens = ["#3DCD58","#2ecc71","#6adf8a","#1fbf67","#4ade80","#22c55e"];
+    const bg = greens[h % greens.length];
+
+    const svg =
+`<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 56 56">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="${bg}"/>
+      <stop offset="1" stop-color="#0ea5e9" stop-opacity=".20"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="56" height="56" rx="16" fill="url(#g)"/>
+  <g transform="translate(0,0)">
+    ${icons[idx](bg)}
+  </g>
+</svg>`;
+    return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
   }
 
   function shuffle(arr){
@@ -655,7 +698,7 @@
       tile.innerHTML = `
         <div class="tileTop">
           <div class="who">
-            <div class="avatar"><img src="${avatarUrl(r.recognizedUser)}" alt="avatar"/></div>
+            <div class="avatar"><img src="${ecoAvatarDataUrl(r.recognizedUser)}" alt="avatar"/></div>
             <div class="names">
               <div class="recognized">${r.recognizedUser}</div>
               <div class="by">reconocido por ${r.recognizedBy}</div>
@@ -682,7 +725,7 @@
   function renderLeaderboard(rows){
     const box = document.getElementById("leaderboard");
     box.innerHTML = "";
-    document.getElementById("lbCount").textContent = rows.length ? `(${rows.length})` : "";
+    document.getElementById("lbCount").textContent = rows.length ? `(${rows.length})` : "—";
 
     rows.slice(0,10).forEach((x, idx)=>{
       const row = document.createElement("div");
@@ -690,7 +733,7 @@
       row.innerHTML = `
         <div class="lbLeft">
           <div class="lbRank">${idx+1}</div>
-          <div class="miniAvatar"><img src="${avatarUrl(x.name)}" alt="avatar"/></div>
+          <div class="miniAvatar"><img src="${ecoAvatarDataUrl(x.name)}" alt="avatar"/></div>
           <div class="lbName">${x.name}</div>
         </div>
         <div class="lbPts">${x.points} pts</div>
@@ -704,10 +747,10 @@
   }
 
   function renderNeeds(status){
-    const nowIso = status.now;
-    const pointsMap = status.points || {};
-    const lastMap = status.lastRecognizedAt || {};
-    const staleDays = status.staleDays || 15;
+    const nowIso = status?.now || new Date().toISOString();
+    const pointsMap = status?.points || {};
+    const lastMap = status?.lastRecognizedAt || {};
+    const staleDays = status?.staleDays || 15;
 
     const needs = USERS.map(name=>{
       const points = pointsMap[name] || 0;
@@ -724,12 +767,12 @@
       return db - da;
     });
 
-    document.getElementById("needCount").textContent = needs.length ? `(${needs.length})` : "";
+    document.getElementById("needCount").textContent = needs.length ? `(${needs.length})` : "—";
 
     const box = document.getElementById("needsList");
     box.innerHTML = "";
 
-    needs.slice(0,12).forEach(x=>{
+    needs.slice(0,18).forEach(x=>{
       const badgeText = x.days === null ? "Nunca" : `${x.days} día(s)`;
       const row = document.createElement("div");
       row.className = "lbRow needRow";
@@ -741,7 +784,7 @@
       };
       row.innerHTML = `
         <div class="lbLeft">
-          <div class="miniAvatar"><img src="${avatarUrl(x.name)}" alt="avatar"/></div>
+          <div class="miniAvatar"><img src="${ecoAvatarDataUrl(x.name)}" alt="avatar"/></div>
           <div class="lbName">${x.name}</div>
         </div>
         <div class="needBadge">${badgeText}</div>
@@ -755,20 +798,30 @@
   }
 
   async function loadAll(){
+    // ✅ fail-soft: si falla status, no rompe todo
     try{
       document.getElementById("statusPill").textContent = "Conectado ✅";
       const feed = await apiGet(API_RECOG);
       renderFeed(feed);
-
-      const lb = await apiGet(API_LB);
-      renderLeaderboard(lb);
-
-      const status = await apiGet(API_STATUS);
-      renderNeeds(status);
-
     }catch(e){
       document.getElementById("statusPill").textContent = "Error ❌";
-      toast(e.message || "Error");
+      toast(e.message || "Error cargando mural");
+    }
+
+    try{
+      const lb = await apiGet(API_LB);
+      renderLeaderboard(lb);
+    }catch(e){
+      toast(e.message || "Error cargando leaderboard");
+    }
+
+    // status puede no existir si backend no está actualizado: fallback
+    try{
+      const status = await apiGet(API_STATUS);
+      renderNeeds(status);
+    }catch(e){
+      // fallback: muestra al menos 0 puntos (sin días)
+      renderNeeds({ now: new Date().toISOString(), points: {}, lastRecognizedAt: {}, staleDays: 15 });
     }
   }
 
@@ -829,4 +882,3 @@
 </script>
 </body>
 </html>
-``
