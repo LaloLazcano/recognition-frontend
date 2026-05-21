@@ -7,7 +7,7 @@
 
   <style>
     :root{
-      --schneider-green:#3DCD58; /* [1](https://engage.cloud.microsoft/main/threads/eyJfdHlwZSI6IlRocmVhZCIsImlkIjoiMzcxMzAxNTAxMTY0NzQ4OCJ9) */
+      --schneider-green:#3DCD58;
       --navy:#243447;
       --bg:#f5f7fb;
       --card:#ffffff;
@@ -44,6 +44,7 @@
       font-weight:950;
       letter-spacing:.2px;
       font-size:18px;
+      flex-wrap:wrap;
     }
     .brand .title{
       color:var(--schneider-green);
@@ -71,13 +72,13 @@
       white-space:nowrap;
     }
 
-    /* ✅ Layout: IZQ (Pendientes) | CENTRO (Main) | DER (Leaderboard) */
+    /* Layout MAIN + Sidebar derecha */
     .wrap{
       width: min(98vw, 1680px);
       margin:16px auto;
       padding:0 10px 28px;
       display:grid;
-      grid-template-columns: 1.05fr 3.0fr 1.15fr;
+      grid-template-columns: 3.2fr 1.2fr;
       gap:16px;
       align-items:start;
     }
@@ -140,7 +141,7 @@
       font-size:14px;
     }
     textarea{
-      min-height: 180px; /* caja grande */
+      min-height: 180px;
       resize: vertical;
     }
     input:focus, textarea:focus{
@@ -209,7 +210,7 @@
       white-space:nowrap;
     }
 
-    /* Feed grid 4 columnas */
+    /* Feed 4 columnas */
     .feed{
       padding:14px;
       display:grid;
@@ -218,7 +219,6 @@
       align-items:start;
     }
 
-    /* Tile */
     .tile{
       border-radius:20px;
       overflow:hidden;
@@ -263,7 +263,7 @@
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width: 220px;
+      max-width: 240px;
     }
     .by{
       font-size:12px;
@@ -271,7 +271,7 @@
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width: 220px;
+      max-width: 240px;
     }
 
     .tag{
@@ -284,7 +284,7 @@
       white-space:nowrap;
     }
 
-    /* ✅ SIN RECORTE: la tarjeta crece y el texto envuelve */
+    /* ✅ NO RECORTE: el comentario envuelve y crece */
     .tileCenter{
       padding:0 14px 12px;
       color:#fff;
@@ -335,20 +335,25 @@
       white-space:nowrap;
     }
 
-    /* Sidebar blocks */
+    /* Sidebar */
     .side{
       padding:12px 14px;
       display:grid;
       gap:12px;
     }
-    .block{
+
+    /* Collapsible blocks usando <details> */
+    details.block{
       background:#fff;
       border:1px solid var(--border);
       border-radius:18px;
       overflow:hidden;
       box-shadow: var(--shadow2);
     }
-    .blockTitle{
+    details.block + details.block{ margin-top:12px; }
+
+    summary.blockTitle{
+      list-style:none;
       padding:10px 12px;
       font-weight:950;
       color:var(--muted);
@@ -360,7 +365,26 @@
       font-size:12px;
       text-transform:uppercase;
       letter-spacing:.2px;
+      cursor:pointer;
+      user-select:none;
+      background:#fff;
     }
+    summary.blockTitle::-webkit-details-marker{ display:none; }
+    summary .arrow{
+      font-size:14px;
+      color:#0f172a;
+      opacity:.6;
+      transform: rotate(0deg);
+      transition:.15s ease;
+    }
+    details[open] summary .arrow{
+      transform: rotate(180deg);
+    }
+
+    .blockBody{
+      padding:0;
+    }
+
     .lbRow{
       display:flex;
       align-items:center;
@@ -370,6 +394,7 @@
       border-top:1px solid var(--border);
     }
     .lbRow:first-child{ border-top:0; }
+
     .lbLeft{
       display:flex; align-items:center; gap:10px; min-width:0;
     }
@@ -394,7 +419,7 @@
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width:190px;
+      max-width:180px;
     }
     .lbPts{
       font-weight:950;
@@ -441,11 +466,11 @@
     .bg-teamwork  { background: linear-gradient(135deg, #10b981, #0ea5e9); }
 
     /* Responsive */
-    @media (max-width: 1500px){
-      .wrap{ grid-template-columns: 1.05fr 2.6fr 1.15fr; }
+    @media (max-width: 1400px){
       .feed{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .wrap{ grid-template-columns: 3fr 1.2fr; }
     }
-    @media (max-width: 1200px){
+    @media (max-width: 1050px){
       .wrap{ grid-template-columns: 1fr; }
       .feed{ grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
@@ -469,22 +494,7 @@
 
 <div class="wrap">
 
-  <!-- LEFT: Pendientes -->
-  <aside class="panel">
-    <h2>
-      Pendientes
-      <small id="needCount">—</small>
-    </h2>
-    <div class="side">
-      <div class="block">
-        <div class="blockTitle">🟢 Pendientes de reconocimiento</div>
-        <div id="needsList"></div>
-      </div>
-      <div class="hint">Tip: da clic en un nombre para autollenar “¿A quién reconoces?”</div>
-    </div>
-  </aside>
-
-  <!-- CENTER: Main -->
+  <!-- MAIN -->
   <section class="panel">
     <h2>
       Pizarrón principal
@@ -527,18 +537,30 @@
     <div class="feed" id="feed"></div>
   </section>
 
-  <!-- RIGHT: Leaderboard -->
+  <!-- SIDEBAR RIGHT -->
   <aside class="panel">
-    <h2>
-      Ranking
-      <small id="lbCount">—</small>
-    </h2>
+    <h2>Panel lateral <small>plegable</small></h2>
     <div class="side">
-      <div class="block">
-        <div class="blockTitle">🏆 Tablero de clasificación</div>
-        <div id="leaderboard"></div>
-      </div>
-      <div class="hint">Ordenado por puntos (no por nombre).</div>
+
+      <!-- Ranking (collapsible) -->
+      <details class="block" open>
+        <summary class="blockTitle">
+          <span>🏆 Ranking</span>
+          <span class="arrow">▼</span>
+        </summary>
+        <div class="blockBody" id="leaderboard"></div>
+      </details>
+
+      <!-- Pendientes (collapsible) -->
+      <details class="block">
+        <summary class="blockTitle">
+          <span>🟢 Pendientes de reconocimiento</span>
+          <span class="arrow">▼</span>
+        </summary>
+        <div class="blockBody" id="needsList"></div>
+      </details>
+
+      <div class="hint">Tip: clic en un pendiente → autollenar “¿A quién reconoces?”</div>
     </div>
   </aside>
 
@@ -548,9 +570,9 @@
 
 <script>
   // ======================================================
-  // ✅ CONFIG (PEGA TU API KEY AQUÍ)
+  // ✅ CONFIG (API KEY)
   // ======================================================
-  const API_KEY = "recognition123secure";
+  const API_KEY = "recognition123secure"; // <-- pega tu key aquí
 
   const API_BASE = "https://recognition-backend-lz5r.onrender.com";
   const API_RECOG = `${API_BASE}/recognitions`;
@@ -589,25 +611,17 @@
     setTimeout(()=>t.classList.remove("show"), 2600);
   }
 
-  // ✅ “Imagen” eco (no solo iniciales): SVG embebido tipo “eco icon”
-  // (0 dependencias externas, y se ve como imagen real)
+  // “Imagen eco” determinística por nombre (SVG embebido)
   function ecoAvatarDataUrl(name){
     const icons = [
-      // hoja
       (bg)=>`<path d="M18 45c16-6 26-18 28-34 1-8-4-11-12-8C18 8 10 24 8 35c-1 7 4 12 10 10z" fill="${bg}"/><path d="M10 36c8-8 16-14 28-20" stroke="#0b1220" stroke-opacity=".25" stroke-width="3" fill="none" stroke-linecap="round"/>`,
-      // planeta
       (bg)=>`<circle cx="28" cy="28" r="18" fill="${bg}"/><path d="M10 30c6-6 30-8 36 0" stroke="#0b1220" stroke-opacity=".22" stroke-width="3" fill="none"/><path d="M14 22c8 6 20 6 28 0" stroke="#0b1220" stroke-opacity=".22" stroke-width="3" fill="none"/>`,
-      // turbina
       (bg)=>`<circle cx="28" cy="14" r="6" fill="${bg}"/><path d="M28 20v26" stroke="${bg}" stroke-width="5" stroke-linecap="round"/><path d="M28 14l-18 10 18-2z" fill="${bg}"/><path d="M28 14l18 10-6-16z" fill="${bg}"/><path d="M28 14l0-20 6 16z" fill="${bg}"/>`,
-      // reciclaje
       (bg)=>`<path d="M22 8l6 10h-7l-4-7z" fill="${bg}"/><path d="M34 14l-10 6 4-6z" fill="${bg}"/><path d="M38 26l-10 0 6-4z" fill="${bg}"/><path d="M24 46l-6-10h7l4 7z" fill="${bg}"/><path d="M14 38l10-6-4 6z" fill="${bg}"/><path d="M10 26l10 0-6 4z" fill="${bg}"/>`,
-      // panel solar
       (bg)=>`<rect x="12" y="18" width="32" height="22" rx="4" fill="${bg}"/><path d="M12 26h32M12 32h32M20 18v22M28 18v22M36 18v22" stroke="#0b1220" stroke-opacity=".18" stroke-width="2"/>`,
-      // batería
       (bg)=>`<rect x="14" y="16" width="28" height="24" rx="5" fill="${bg}"/><rect x="22" y="12" width="12" height="6" rx="2" fill="${bg}"/><path d="M22 28h12" stroke="#0b1220" stroke-opacity=".25" stroke-width="3" stroke-linecap="round"/>`
     ];
 
-    // hash simple
     let h = 0;
     for (let i=0;i<name.length;i++) h = (h*31 + name.charCodeAt(i)) >>> 0;
     const idx = h % icons.length;
@@ -624,9 +638,7 @@
     </linearGradient>
   </defs>
   <rect x="0" y="0" width="56" height="56" rx="16" fill="url(#g)"/>
-  <g transform="translate(0,0)">
-    ${icons[idx](bg)}
-  </g>
+  <g>${icons[idx](bg)}</g>
 </svg>`;
     return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
   }
@@ -725,7 +737,6 @@
   function renderLeaderboard(rows){
     const box = document.getElementById("leaderboard");
     box.innerHTML = "";
-    document.getElementById("lbCount").textContent = rows.length ? `(${rows.length})` : "—";
 
     rows.slice(0,10).forEach((x, idx)=>{
       const row = document.createElement("div");
@@ -742,7 +753,7 @@
     });
 
     if (!rows.length){
-      box.innerHTML = `<div class="lbRow"><div class="hint">Aún no hay puntos</div></div>`;
+      box.innerHTML = `<div class="lbRow"><div style="color:#64748b;font-size:12px;">Aún no hay puntos</div></div>`;
     }
   }
 
@@ -766,8 +777,6 @@
       const db = (b.days === null) ? 9999 : b.days;
       return db - da;
     });
-
-    document.getElementById("needCount").textContent = needs.length ? `(${needs.length})` : "—";
 
     const box = document.getElementById("needsList");
     box.innerHTML = "";
@@ -793,12 +802,11 @@
     });
 
     if (!needs.length){
-      box.innerHTML = `<div class="lbRow"><div class="hint">¡Todos han sido reconocidos recientemente! 🎉</div></div>`;
+      box.innerHTML = `<div class="lbRow"><div style="color:#64748b;font-size:12px;">¡Todos han sido reconocidos recientemente! 🎉</div></div>`;
     }
   }
 
   async function loadAll(){
-    // ✅ fail-soft: si falla status, no rompe todo
     try{
       document.getElementById("statusPill").textContent = "Conectado ✅";
       const feed = await apiGet(API_RECOG);
@@ -812,15 +820,14 @@
       const lb = await apiGet(API_LB);
       renderLeaderboard(lb);
     }catch(e){
-      toast(e.message || "Error cargando leaderboard");
+      toast(e.message || "Error cargando ranking");
     }
 
-    // status puede no existir si backend no está actualizado: fallback
     try{
       const status = await apiGet(API_STATUS);
       renderNeeds(status);
     }catch(e){
-      // fallback: muestra al menos 0 puntos (sin días)
+      // fallback (no rompe UI)
       renderNeeds({ now: new Date().toISOString(), points: {}, lastRecognizedAt: {}, staleDays: 15 });
     }
   }
